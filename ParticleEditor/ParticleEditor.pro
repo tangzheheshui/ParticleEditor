@@ -1,8 +1,7 @@
-QT += widgets opengl openglwidgets
+QT += widgets opengl openglwidgets quick
 
 HEADERS += \
     glwidget.h \
-    mainwindow.h \
     render/core/camera.h \
     render/core/scene.h \
     render/core/shadercache.h \
@@ -12,7 +11,6 @@ HEADERS += \
 SOURCES += \
     glwidget.cpp \
     main.cpp \
-    mainwindow.cpp \
     render/core/camera.cpp \
     render/core/scene.cpp \
     render/core/shadercache.cpp \
@@ -21,3 +19,6 @@ SOURCES += \
 DISTFILES += \
     render/shader/frag_color.frag \
     render/shader/vert_color.vert
+
+RESOURCES += \
+    res.qrc

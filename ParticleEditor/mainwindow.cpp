@@ -8,6 +8,6 @@
 
 MainWindow::MainWindow()
 {
-    GLWidget *glwidget = new GLWidget(qRgb(20, 20, 50));
-    setCentralWidget(glwidget);
+    //GLWidget *glwidget = new GLWidget();
+    //setCentralWidget(glwidget);
 }
