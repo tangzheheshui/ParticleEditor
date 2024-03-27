@@ -4,8 +4,8 @@
 #include "camera.h"
 
 const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-const unsigned int SCR_WIDTH = 400;
-const unsigned int SCR_HEIGHT = 300;
+const unsigned int SCR_WIDTH = 512;
+const unsigned int SCR_HEIGHT = 384;
 
 Scene& Scene::getScene() {
     static Scene instance;
@@ -52,7 +52,7 @@ void Scene::update() {
 }
 
 void Scene::draw() {
-    glViewport(0, 0, SCR_WIDTH*2, SCR_HEIGHT*2);
+    //glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glDisable(GL_BLEND);
