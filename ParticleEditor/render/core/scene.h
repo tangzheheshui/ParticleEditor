@@ -25,7 +25,7 @@ private:
     Scene(Scene&& scene) = delete;
     Scene& operator=(Scene&& scene) = delete;
     void createObjs();
-    //void loadTexture(const fs::path& dirPath);
+    void loadTexture(const QString &dirPath);
 
 private:
     //std::shared_ptr<Line> getTestLine();

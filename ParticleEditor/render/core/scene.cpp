@@ -3,8 +3,10 @@
 #include "render/core/light.h"
 #include <QOpenGLShader>
 #include <QVector3D>
+#include <QDir>
 #include "camera.h"
 #include "render/object/imagerectangle.h"
+#include "render/core/texturemng.h"
 
 Scene& Scene::getScene() {
     static Scene instance;
@@ -12,6 +14,7 @@ Scene& Scene::getScene() {
 }
 
 Scene::Scene() {
+    loadTexture(":/render/res/textures");
     createObjs();
     Camera::GetCamera().setPosition({0,0,20});
 }
@@ -43,7 +46,7 @@ void Scene::createObjs() {
     {
         std::shared_ptr<ImageRectangle> objGround = std::make_shared<ImageRectangle>();
         float ground_width = 10;
-        objGround->setImagePath("/Users/liuhaifeng/personal/OpenglLearnMac/OpenglLearn/res/textures/", "bricks2.jpg", "bricks2_normal.jpg", "bricks2_disp.jpg");
+        objGround->setImagePath(":/render/res/textures", "bricks2.jpg", "bricks2_normal.jpg", "bricks2_disp.jpg");
 
         objGround->setSetp(5, 5);
         QVector3D p1(-ground_width, 0,  ground_width);
@@ -97,4 +100,23 @@ QMatrix4x4& Scene::GetLightVPMatrix() {
     lightProjection.perspective(qDegreesToRadians(90), 1.f, near_plane, far_plane);
     m_mat_lightVMP = new QMatrix4x4(lightProjection * lightView);
     return *m_mat_lightVMP;
+}
+
+void Scene::loadTexture(const QString &dirPath) {
+    // QDir directory(dirPath);
+    // QStringList filters;
+    // filters << "*.png" << "*.jpg" << "*.hdr";
+    // directory.setNameFilters(filters);
+    // QStringList pngFiles = directory.entryList(QDir::Files);
+
+    // foreach (const QString &file, pngFiles) {
+    //     // todo 使用异步任务队列
+    //     TextureMng::getInstance().loadTexture(file);
+    //     qDebug() << directory.filePath(file);
+    // }
+
+    // QStringList subDirs = directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    // foreach (const QString &subDir, subDirs) {
+    //     loadTexture(directory.filePath(subDir));
+    // }
 }
