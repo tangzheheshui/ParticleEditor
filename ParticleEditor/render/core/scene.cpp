@@ -1,5 +1,7 @@
 #include "scene.h"
 #include "render/object/drawline.h"
+#include "render/core/light.h"
+#include <QOpenGLShader>
 #include <QVector3D>
 #include "camera.h"
 
@@ -55,4 +57,28 @@ void Scene::draw() {
     for (auto obj : m_vec_drawobj) {
         obj->draw();
     }
+}
+
+void Scene::setLightUniform(QOpenGLShaderProgram* shader) {
+    auto light = Light::GlobalLight();
+    shader->setUniformValue("uLight.position", QVector4D(light.position, 1));
+    shader->setUniformValue("uLight.direction", light.direction);
+    shader->setUniformValue("uLight.cosTheta", light.cosTheta);
+    shader->setUniformValue("uLight.ambient", light.ambient);
+    shader->setUniformValue("uLight.diffuse", light.diffuse);
+    shader->setUniformValue("uLight.specular", light.specular);
+}
+
+QMatrix4x4& Scene::GetLightVPMatrix() {
+    if (m_mat_lightVMP) {
+        return *m_mat_lightVMP;
+    }
+
+    QMatrix4x4 lightProjection, lightView;
+    auto lightPos = Light::GlobalLight().position;
+    float near_plane = 1.0f, far_plane = 15.f;
+    lightView.lookAt(lightPos, QVector3D(0.f, 0.f, 0.f), QVector3D(0.0000001, 1, 0.0));
+    lightProjection.perspective(qDegreesToRadians(90), 1.f, near_plane, far_plane);
+    m_mat_lightVMP = new QMatrix4x4(lightProjection * lightView);
+    return *m_mat_lightVMP;
 }

@@ -3,8 +3,8 @@
 
 const float YAW         = 0.0f;
 const float PITCH       =  0.0f;
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 614;
+const unsigned int SCR_HEIGHT = 455;
 
 Camera::Camera()
     : _yaw(YAW)
@@ -41,6 +41,21 @@ QMatrix4x4 Camera::GetVPMatrix() {
 
     QMatrix4x4 lookat;
     lookat.lookAt(_position, QVector3D(), _worldUp);
+    {
+        QVector3D f = (_position).normalized();
+        QVector3D s = QVector3D::crossProduct(f, _worldUp).normalized();
+        QVector3D u = QVector3D::crossProduct(s, f);
+
+        QMatrix4x4 result;
+        result.setColumn(0, QVector4D(s, 0));
+        result.setColumn(1, QVector4D(u, 0));
+        result.setColumn(2, QVector4D(-f, 0));
+        result.setColumn(3, QVector4D(0, 0, 0, 1));
+
+        QMatrix4x4 temp;
+        temp.translate(-_position);
+        //lookat = result * temp;
+    }
     QMatrix4x4 projection;
     projection.perspective(qRadiansToDegrees(_fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, _near, _far);
     return projection * lookat;
