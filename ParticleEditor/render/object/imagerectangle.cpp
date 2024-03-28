@@ -91,7 +91,7 @@ bool ImageRectangle::draw() {
 
     // 灯光
     Scene& scene = Scene::getScene();
-    scene.setLightUniform(shader);
+    scene.setLightUniform(shader.get());
 
     // 相机位置
     auto cam_pos = Camera::GetCamera().getPossition();

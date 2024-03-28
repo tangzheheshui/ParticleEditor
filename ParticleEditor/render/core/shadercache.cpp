@@ -1,41 +1,48 @@
 #include "shadercache.h"
 #include <QDir>
 #include <QUrl>
-const QString file_root = "../ren";
 
 ShaderCache& ShaderCache::GetInstance() {
     static ShaderCache instance;
     return instance;
 }
 
-ShaderCache::ShaderCache() {
+SPTR_SHADER_PROGRAM ShaderCache::addShader(const QString& vert, const QString& frag) {
     QString rootPath = ":/render/shader/";
-    // 线
+
     QOpenGLShader m_vshader(QOpenGLShader::Vertex);
-    QString filename = rootPath + "vert_color.vert";
-    bool ret = m_vshader.compileSourceFile(filename);
-    assert(ret);
+    if (!m_vshader.compileSourceFile(rootPath + vert)) {
+        return nullptr;
+    }
 
-    filename = rootPath + "frag_color.frag";
     QOpenGLShader m_fshader(QOpenGLShader::Fragment);
-    ret = m_fshader.compileSourceFile(filename);
-    assert(ret);
+    if (!m_fshader.compileSourceFile(rootPath + frag)) {
+        return nullptr;
+    }
 
-    auto m_program = new QOpenGLShaderProgram;
-    ret = m_program->addShader(&m_vshader);
-    assert(ret);
+    auto shader = std::make_shared<QOpenGLShaderProgram>();
+    if (shader->addShader(&m_vshader) &&
+        shader->addShader(&m_fshader) &&
+        shader->link()) {
+        return shader;
+    }
 
-    ret = m_program->addShader(&m_fshader);
-    assert(ret);
-
-    ret = m_program->link();
-    assert(ret);
-
-    auto pair = std::make_pair(ShaderType::Color, m_program);
-    m_map_shader.insert(pair);
+    return nullptr;
 }
 
-QOpenGLShaderProgram* ShaderCache::GetShader(ShaderType type) {
+ShaderCache::ShaderCache() {
+    // 线
+    auto shader = addShader("color.vert", "color.frag");
+    assert(shader);
+    m_map_shader.insert(std::make_pair(ShaderType::Color, shader));
+
+    // 地面
+    shader = addShader("ground.vert", "ground.frag");
+    assert(shader);
+    m_map_shader.insert(std::make_pair(ShaderType::Ground, shader));
+}
+
+SPTR_SHADER_PROGRAM ShaderCache::GetShader(ShaderType type) {
     auto iter = m_map_shader.find(type);
     if (iter != m_map_shader.end()) {
         return iter->second;

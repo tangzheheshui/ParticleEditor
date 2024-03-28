@@ -18,14 +18,24 @@ enum class ShaderType {
     Model_Texture_Anim,
 };
 
+class QOpenGLShaderProgram;
+typedef std::shared_ptr<QOpenGLShaderProgram> SPTR_SHADER_PROGRAM;
+
 class ShaderCache {
 public:
     static ShaderCache& GetInstance();
-    QOpenGLShaderProgram* GetShader(ShaderType type);
+    SPTR_SHADER_PROGRAM GetShader(ShaderType type);
 private:
     ShaderCache();
+    ~ShaderCache() {}
+    ShaderCache(const ShaderCache& shader) = delete;
+    ShaderCache(ShaderCache&& shader) = delete;
+    ShaderCache& operator=(const ShaderCache& shader) = delete;
+    ShaderCache& operator=(ShaderCache&& shader) = delete;
 private:
-    std::map<ShaderType, QOpenGLShaderProgram*> m_map_shader;
+    SPTR_SHADER_PROGRAM addShader(const QString& vert, const QString& frag);
+private:
+    std::map<ShaderType, SPTR_SHADER_PROGRAM> m_map_shader;
 };
 
 #endif // SHADERCACHE_H
