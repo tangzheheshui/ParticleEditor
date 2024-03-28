@@ -53,6 +53,7 @@ bool ImageRectangle::draw() {
     shader->bind();
 
     auto texture = TextureMng::getInstance().getTexture(m_image_diffuse);
+    assert(texture);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->textureId());
     shader->setUniformValue("uTexture", 0);

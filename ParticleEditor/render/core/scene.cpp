@@ -46,7 +46,7 @@ void Scene::createObjs() {
     {
         std::shared_ptr<ImageRectangle> objGround = std::make_shared<ImageRectangle>();
         float ground_width = 10;
-        objGround->setImagePath(":/render/res/textures", "bricks2.jpg", "bricks2_normal.jpg", "bricks2_disp.jpg");
+        objGround->setImagePath(":/render/res/textures/", "bricks2.jpg", "bricks2_normal.jpg", "bricks2_disp.jpg");
 
         objGround->setSetp(5, 5);
         QVector3D p1(-ground_width, 0,  ground_width);
@@ -55,7 +55,7 @@ void Scene::createObjs() {
         QVector3D p4(-ground_width, 0, -ground_width);
         objGround->setPoints(p1, p2, p3, p4);
         objGround->calculate();
-        //m_vec_drawobj.push_back(objGround);
+        m_vec_drawobj.push_back(objGround);
     }
     m_vec_drawobj.push_back(line_x);
     m_vec_drawobj.push_back(line_y);
@@ -103,20 +103,20 @@ QMatrix4x4& Scene::GetLightVPMatrix() {
 }
 
 void Scene::loadTexture(const QString &dirPath) {
-    // QDir directory(dirPath);
-    // QStringList filters;
-    // filters << "*.png" << "*.jpg" << "*.hdr";
-    // directory.setNameFilters(filters);
-    // QStringList pngFiles = directory.entryList(QDir::Files);
+    QDir directory(dirPath);
+    QStringList filters;
+    filters << "*.png" << "*.jpg" << "*.hdr";
+    directory.setNameFilters(filters);
+    QStringList pngFiles = directory.entryList(QDir::Files);
 
-    // foreach (const QString &file, pngFiles) {
-    //     // todo 使用异步任务队列
-    //     TextureMng::getInstance().loadTexture(file);
-    //     qDebug() << directory.filePath(file);
-    // }
+    foreach (const QString &file, pngFiles) {
+        // todo 使用异步任务队列
+        TextureMng::getInstance().loadTexture(directory.filePath(file));
+        qDebug() << directory.filePath(file);
+    }
 
-    // QStringList subDirs = directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    // foreach (const QString &subDir, subDirs) {
-    //     loadTexture(directory.filePath(subDir));
-    // }
+    QStringList subDirs = directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    foreach (const QString &subDir, subDirs) {
+        loadTexture(directory.filePath(subDir));
+    }
 }

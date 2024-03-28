@@ -123,7 +123,7 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
             fov = 90.0f;
 
         Camera::GetCamera().setFov(fov);
-        qDebug() << "fov = " << fov;
+        //qDebug() << "fov = " << fov;
     }
 }
 

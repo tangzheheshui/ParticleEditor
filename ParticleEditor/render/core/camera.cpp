@@ -83,7 +83,7 @@ void Camera::caculate() {
     float z = r * cos(qRadiansToDegrees(_pitch)) * cos(qRadiansToDegrees(_yaw));
     _position = {x, y, z};
 
-    qDebug() << "cam_pos = " << _position;
+    //qDebug() << "cam_pos = " << _position;
 }
 
 Camera& Camera::GetCamera() {
