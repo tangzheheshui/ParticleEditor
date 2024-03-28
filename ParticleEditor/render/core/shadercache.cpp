@@ -1,6 +1,6 @@
 #include "shadercache.h"
-#include "QDir"
-
+#include <QDir>
+#include <QUrl>
 const QString file_root = "../ren";
 
 ShaderCache& ShaderCache::GetInstance() {
@@ -9,11 +9,10 @@ ShaderCache& ShaderCache::GetInstance() {
 }
 
 ShaderCache::ShaderCache() {
+    QString rootPath = ":/render/shader/";
     // 线
     QOpenGLShader m_vshader(QOpenGLShader::Vertex);
-    QString rootPath = "/Users/liuhaifeng/personal/qtPro/stereoqopenglwidget/render/shader/";
     QString filename = rootPath + "vert_color.vert";
-
     bool ret = m_vshader.compileSourceFile(filename);
     assert(ret);
 

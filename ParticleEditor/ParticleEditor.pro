@@ -21,9 +21,8 @@ SOURCES += \
     render/object/drawline.cpp \
     render/object/imagerectangle.cpp
 
-DISTFILES += \
-    render/shader/frag_color.frag \
-    render/shader/vert_color.vert
+DISTFILES +=
 
 RESOURCES += \
-    res.qrc
+    res.qrc \
+    shader.qrc

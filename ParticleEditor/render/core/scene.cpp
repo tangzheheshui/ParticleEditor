@@ -4,6 +4,7 @@
 #include <QOpenGLShader>
 #include <QVector3D>
 #include "camera.h"
+#include "render/object/imagerectangle.h"
 
 Scene& Scene::getScene() {
     static Scene instance;
@@ -38,6 +39,21 @@ void Scene::createObjs() {
     line_y->setColor({0, 1, 0});
     line_z->setColor({0, 0, 1});
 
+    // 地面
+    {
+        std::shared_ptr<ImageRectangle> objGround = std::make_shared<ImageRectangle>();
+        float ground_width = 10;
+        objGround->setImagePath("/Users/liuhaifeng/personal/OpenglLearnMac/OpenglLearn/res/textures/", "bricks2.jpg", "bricks2_normal.jpg", "bricks2_disp.jpg");
+
+        objGround->setSetp(5, 5);
+        QVector3D p1(-ground_width, 0,  ground_width);
+        QVector3D p2(ground_width, 0,  ground_width);
+        QVector3D p3(ground_width, 0, -ground_width);
+        QVector3D p4(-ground_width, 0, -ground_width);
+        objGround->setPoints(p1, p2, p3, p4);
+        objGround->calculate();
+        //m_vec_drawobj.push_back(objGround);
+    }
     m_vec_drawobj.push_back(line_x);
     m_vec_drawobj.push_back(line_y);
     m_vec_drawobj.push_back(line_z);
