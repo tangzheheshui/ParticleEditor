@@ -1,4 +1,5 @@
 #include "camera.h"
+#include <QtCore/QDebug>
 
 const float YAW         = 0.0f;
 const float PITCH       =  0.0f;
@@ -66,6 +67,8 @@ void Camera::caculate() {
     float x = r * cos(qRadiansToDegrees(_pitch)) * sin(qRadiansToDegrees(_yaw));
     float z = r * cos(qRadiansToDegrees(_pitch)) * cos(qRadiansToDegrees(_yaw));
     _position = {x, y, z};
+
+    qDebug() << "cam_pos = " << _position;
 }
 
 Camera& Camera::GetCamera() {

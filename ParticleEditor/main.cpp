@@ -32,5 +32,6 @@ int main( int argc, char ** argv )
     view.setMaximumHeight(h);
     view.setMinimumWidth(w);
     view.setMaximumWidth(w);
+
     return a.exec();
 }
