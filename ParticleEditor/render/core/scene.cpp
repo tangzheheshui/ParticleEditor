@@ -3,10 +3,6 @@
 #include <QVector3D>
 #include "camera.h"
 
-const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-const unsigned int SCR_WIDTH = 512;
-const unsigned int SCR_HEIGHT = 384;
-
 Scene& Scene::getScene() {
     static Scene instance;
     return instance;

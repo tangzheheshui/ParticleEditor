@@ -48,16 +48,16 @@ Item {
 
     GLWidget {
         id: gLWidget
-        x: 243
-        y: 146
-        width: 512
-        height: 384
+        x: 204
+        y: 130
+        width: 612
+        height: 455
     }
 
     Text {
         id: text1
         x: 243
-        y: 146
+        y: 46
         width: 146
         height: 45
         text: qsTr("Text")
