@@ -13,11 +13,16 @@ Camera::Camera()
 {
     _near = 0.1f;
     _far = 100.f;
-    _position = {0, 0, 0};
+    _position = _target = {0, 0, 0};
 }
 
 void Camera::setPosition(QVector3D pos) {
     _position = pos;
+    _needCal = true;
+}
+
+void Camera::setTartet(QVector3D pos) {
+    _target = pos;
     _needCal = true;
 }
 
@@ -57,7 +62,7 @@ QMatrix4x4 Camera::GetVPMatrix() {
         //lookat = result * temp;
     }
     QMatrix4x4 projection;
-    projection.perspective(qRadiansToDegrees(_fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, _near, _far);
+    projection.perspective((_fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, _near, _far);
     return projection * lookat;
 }
 
@@ -66,24 +71,27 @@ void Camera::caculate() {
         return;
     }
     _needCal = false;
-    QVector3D front;
-    front.setX(cos(qRadiansToDegrees(_yaw)) * cos(qRadiansToDegrees(_pitch)) );
-    front.setY(sin(qRadiansToDegrees(_pitch)));
-    front.setZ(sin(qRadiansToDegrees(_yaw)) * cos(qRadiansToDegrees(_pitch)));
-    _front = front.normalized();
-
-    // also re-calculate the Right and Up vector
-    _right = QVector3D::crossProduct(_front, _worldUp).normalized();
-    _up    = QVector3D::crossProduct(_right, _front).normalized();
 
     // 重新计算位置
-    float r = _position.length();
-    float y = r * sin(qRadiansToDegrees(_pitch));
-    float x = r * cos(qRadiansToDegrees(_pitch)) * sin(qRadiansToDegrees(_yaw));
-    float z = r * cos(qRadiansToDegrees(_pitch)) * cos(qRadiansToDegrees(_yaw));
+    if (_first) {
+        auto dir = _position - _target;
+        _yaw = atan2(dir.x(), dir.z());
+        _yaw = qRadiansToDegrees(_yaw);
+        _pitch = atan2(dir.y(), std::sqrtf(dir.x()*dir.x() + dir.z() * dir.x()));
+        _pitch = qRadiansToDegrees(_pitch);
+        _first = false;
+        qDebug() << "_yaw = " << _yaw << ", _pitch = " << _pitch;
+        return; // 第一次不需要计算pos 和 target
+    }
+
+    auto dir = _position - _target;
+    float r = dir.length();
+    float y = r * sin(qDegreesToRadians(_pitch));
+    float x = r * cos(qDegreesToRadians(_pitch)) * sin(qDegreesToRadians(_yaw));
+    float z = r * cos(qDegreesToRadians(_pitch)) * cos(qDegreesToRadians(_yaw));
     _position = {x, y, z};
 
-    //qDebug() << "cam_pos = " << _position;
+    qDebug() << "cam_pos = " << _position;
 }
 
 Camera& Camera::GetCamera() {

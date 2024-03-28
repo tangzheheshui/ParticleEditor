@@ -83,20 +83,21 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
     auto curPos = event->position();
     auto offset = curPos - _posPressMove;
 
-    float sensitivity = 0.001; // change this value to your liking
+    float sensitivity = 0.5; // change this value to your liking
     offset *= sensitivity;
 
     float yaw = Camera::GetCamera().getYaw();
-    yaw += offset.x();
+    yaw -= offset.x();
     float pitch = Camera::GetCamera().getPitch();
     pitch += offset.y();
 
     // make sure that when pitch is out of bounds, screen doesn't get flipped
     if (pitch > 89.0f)
         pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
+    if (pitch < 1.0f)
+        pitch = 1.0f;
 
+    qDebug() << "_yaw = " << yaw << ", _pitch = " << pitch;
     Camera::GetCamera().setPitch(pitch);
     Camera::GetCamera().setYaw(yaw);
 
@@ -115,7 +116,7 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
     if (event->isUpdateEvent()) {
         float fov = Camera::GetCamera().getFov();
         float y = event->pixelDelta().y();
-        y /= 100;
+        y /= 2;
         fov += y;
         if (fov < 3.0f)
             fov = 3.0f;
@@ -123,7 +124,7 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
             fov = 90.0f;
 
         Camera::GetCamera().setFov(fov);
-        //qDebug() << "fov = " << fov;
+        qDebug() << "fov = " << fov;
     }
 }
 

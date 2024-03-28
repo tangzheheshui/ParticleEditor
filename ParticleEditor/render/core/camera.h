@@ -8,6 +8,7 @@ class Camera {
 public:
     Camera();
     void setPosition(QVector3D pos);
+    void setTartet(QVector3D pos);
     void setYaw(float yaw);
     void setPitch(float pitch);
     void setFov(float fov);
@@ -23,6 +24,7 @@ public:
     static void screenToWorld(const QVector2D &screen, QVector3D &world);
 private:
     QVector3D _position;
+    QVector3D _target;
     QVector3D _front;
     QVector3D _up;
     QVector3D _right;
@@ -34,6 +36,7 @@ private:
     float _near;
     float _far;
     bool _needCal = true;
+    bool _first = true;
 };
 
 #endif /* camera_hpp */

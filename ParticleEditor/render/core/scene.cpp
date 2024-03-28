@@ -16,7 +16,8 @@ Scene& Scene::getScene() {
 Scene::Scene() {
     loadTexture(":/render/res/textures");
     createObjs();
-    Camera::GetCamera().setPosition({0,0,20});
+    Camera::GetCamera().setPosition({10, 10, 10});
+    //Camera::GetCamera().setPitch(45);
 }
 
 void Scene::createObjs() {
