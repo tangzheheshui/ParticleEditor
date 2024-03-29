@@ -4,6 +4,7 @@
 #include <QOpenGLShader>
 #include <QVector3D>
 #include <QDir>
+#include <QElapsedTimer>
 #include "camera.h"
 #include "render/object/imagerectangle.h"
 #include "render/core/texturemng.h"
@@ -14,41 +15,24 @@ Scene& Scene::getScene() {
 }
 
 Scene::Scene() {
+    QElapsedTimer timer;
+    timer.start();
+
     loadTexture(":/render/res/textures");
+
+    qint64 elapsedTime = timer.elapsed();
+    qDebug() << "Function execution time:" << elapsedTime << "milliseconds";
+
     createObjs();
     Camera::GetCamera().setPosition({10, 10, 10});
-    //Camera::GetCamera().setPitch(45);
 }
 
 void Scene::createObjs() {
-    // 绘制坐标轴
-    std::vector<unsigned int> indices = {0, 1};
-
-    float len = 15;
-
-    QVector3D pZero = {0, 0, 0};
-    QVector3D pX = {len, 0, 0};
-    QVector3D pY = {0, len, 0};
-    QVector3D pZ = {0, 0, len};
-    // 3个轴
-    std::shared_ptr<DrawLine> line_x = std::make_shared<DrawLine>();
-    std::shared_ptr<DrawLine> line_y = std::make_shared<DrawLine>();
-    std::shared_ptr<DrawLine> line_z = std::make_shared<DrawLine>();
-    line_x->setData({pZero, pX}, indices);
-    line_y->setData({pZero, pY}, indices);
-    line_z->setData({pZero, pZ}, indices);
-
-    // 颜色
-    line_x->setColor({1, 0, 0});
-    line_y->setColor({0, 1, 0});
-    line_z->setColor({0, 0, 1});
-
     // 地面
     {
         std::shared_ptr<ImageRectangle> objGround = std::make_shared<ImageRectangle>();
         float ground_width = 10;
         objGround->setImagePath(":/render/res/textures/", "bricks2.jpg", "bricks2_normal.jpg", "bricks2_disp.jpg");
-
         objGround->setSetp(5, 5);
         QVector3D p1(-ground_width, 0,  ground_width);
         QVector3D p2(ground_width, 0,  ground_width);
@@ -58,9 +42,29 @@ void Scene::createObjs() {
         objGround->calculate();
         m_vec_drawobj.push_back(objGround);
     }
-    m_vec_drawobj.push_back(line_x);
-    m_vec_drawobj.push_back(line_y);
-    m_vec_drawobj.push_back(line_z);
+
+    // 绘制坐标轴
+    {
+        std::vector<unsigned int> indices = {0, 1};
+        float len = 15;
+        QVector3D pZero = {0, 0, 0};
+        QVector3D pX = {len, 0, 0};
+        QVector3D pY = {0, len, 0};
+        QVector3D pZ = {0, 0, len};
+
+        std::shared_ptr<DrawLine> line_x = std::make_shared<DrawLine>();
+        std::shared_ptr<DrawLine> line_y = std::make_shared<DrawLine>();
+        std::shared_ptr<DrawLine> line_z = std::make_shared<DrawLine>();
+        line_x->setData({pZero, pX}, indices);
+        line_y->setData({pZero, pY}, indices);
+        line_z->setData({pZero, pZ}, indices);
+        line_x->setColor({1, 0, 0});
+        line_y->setColor({0, 1, 0});
+        line_z->setColor({0, 0, 1});
+        m_vec_drawobj.push_back(line_x);
+        m_vec_drawobj.push_back(line_y);
+        m_vec_drawobj.push_back(line_z);
+    }
 }
 
 void Scene::update() {
@@ -70,10 +74,15 @@ void Scene::update() {
 }
 
 void Scene::draw() {
-    //glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+    // 设置裁剪区域
+    glViewport(m_viewport.x(), m_viewport.y(), m_viewport.z(), m_viewport.w());
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(m_viewport.x(), m_viewport.y(), m_viewport.z(), m_viewport.w());
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glDisable(GL_BLEND);
+
     for (auto obj : m_vec_drawobj) {
         obj->draw();
     }
@@ -113,11 +122,16 @@ void Scene::loadTexture(const QString &dirPath) {
     foreach (const QString &file, pngFiles) {
         // todo 使用异步任务队列
         TextureMng::getInstance().loadTexture(directory.filePath(file));
-        qDebug() << directory.filePath(file);
+        //qDebug() << directory.filePath(file);
     }
 
     QStringList subDirs = directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
     foreach (const QString &subDir, subDirs) {
         loadTexture(directory.filePath(subDir));
     }
+}
+
+void Scene::setViewport(const QVector4D &port) {
+    m_viewport = port;
+    Camera::GetCamera().setViewport({port.z(), port.w()});
 }

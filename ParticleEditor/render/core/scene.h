@@ -16,7 +16,7 @@ public:
     void draw();
     void update();
     void setLightUniform(QOpenGLShaderProgram* shader);
-
+    void setViewport(const QVector4D &port);
 private:
     Scene();
     ~Scene() {}
@@ -32,15 +32,8 @@ private:
     //std::vector<std::shared_ptr<ImageRectangle>> createGlass();
 private:
     std::vector<std::shared_ptr<BaseDraw>> m_vec_drawobj;
-    GLuint _depthMapFBO = 0;
-    //inline static GLuint _depthTexture = 0;
-    //inline static Matrix* _lightVPMatrix = nullptr;
-
-    //GLuint _fragment_alpha_buffer;
-    //GLuint _atomic_counter;
-    //GLuint _texture_blend;
-    //GLuint _pbo_head_pointer;
     QMatrix4x4* m_mat_lightVMP = nullptr;
+    QVector4D m_viewport;
 };
 
 #endif // SCENE_H

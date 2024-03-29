@@ -9,10 +9,10 @@ public:
     Camera();
     void setPosition(QVector3D pos);
     void setTartet(QVector3D pos);
+    void setViewport(const QVector2D &port) { _viewPort = port; }
     void setYaw(float yaw);
     void setPitch(float pitch);
     void setFov(float fov);
-
     float getYaw() { return _yaw; }
     float getPitch() { return _pitch; }
     float getFov() { return _fov; }
@@ -21,13 +21,10 @@ public:
     void caculate();
     QMatrix4x4 GetVPMatrix();
     static Camera& GetCamera();
-    static void screenToWorld(const QVector2D &screen, QVector3D &world);
+    void screenToWorld(const QVector2D &screen, QVector3D &world);
 private:
     QVector3D _position;
     QVector3D _target;
-    QVector3D _front;
-    QVector3D _up;
-    QVector3D _right;
     const QVector3D _worldUp = {0, 1, 0};
     // euler Angles
     float _yaw;
@@ -37,6 +34,7 @@ private:
     float _far;
     bool _needCal = true;
     bool _first = true;
+    QVector2D _viewPort;
 };
 
 #endif /* camera_hpp */

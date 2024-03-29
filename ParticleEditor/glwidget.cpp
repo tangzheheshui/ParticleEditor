@@ -14,7 +14,6 @@ GLWidget::GLWidget()
     installEventFilter(this);
     setFlag(ItemAcceptsInputMethod, true);
     connect(this, &QQuickItem::windowChanged, this, &GLWidget::handleWindowChanged);
-    //connect(this, &QQuickItem::window, [=](){  });
 }
 
 void GLWidget::handleWindowChanged(QQuickWindow* win) {
@@ -38,7 +37,6 @@ GLWidget::~GLWidget()
 }
 
 QSGNode* GLWidget::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) {
-    //qDebug() << __FUNCTION__;
     paintGL();
 }
 
@@ -51,16 +49,14 @@ void GLWidget::paintGL() {
         temp = true;
     }
 
-    int xx = x();
-    int yy = y();
-    int w = width();
-    int h = height();
+    float xx = x();
+    float yy = y();
+    float w = width();
+    float h = height();
     yy = window()->height() - yy - h;
 
+    Scene::getScene().setViewport({2*xx, 2*yy, 2*w, 2*h});
     window()->beginExternalCommands();
-    glViewport(2 * xx, 2 * yy, 2 * w, 2 * h);
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(2 * xx, 2 * yy, 2 * w, 2 * h);
     Scene::getScene().draw();
     window()->endExternalCommands();
 }
@@ -74,12 +70,10 @@ void GLWidget::focusOutEvent(QFocusEvent *) {
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event) {
-    //qDebug() << "mousePressEvent at:" << event->pos();
     _posPressMove = _posPress = event->position();
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {
-    qDebug() << "Mouse moved to:" << event->pos();
     auto curPos = event->position();
     auto offset = curPos - _posPressMove;
 
@@ -124,7 +118,7 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
             fov = 90.0f;
 
         Camera::GetCamera().setFov(fov);
-        qDebug() << "fov = " << fov;
+        //qDebug() << "fov = " << fov;
     }
 }
 
