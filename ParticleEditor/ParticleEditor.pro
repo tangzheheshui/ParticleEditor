@@ -1,4 +1,4 @@
-QT += widgets opengl openglwidgets quick
+QT += widgets opengl openglwidgets quick quickcontrols2
 
 HEADERS += \
     glwidget.h \

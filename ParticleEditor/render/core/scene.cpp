@@ -122,7 +122,7 @@ void Scene::loadTexture(const QString &dirPath) {
     foreach (const QString &file, pngFiles) {
         // todo 使用异步任务队列
         TextureMng::getInstance().loadTexture(directory.filePath(file));
-        //qDebug() << directory.filePath(file);
+        qDebug() << directory.filePath(file);
     }
 
     QStringList subDirs = directory.entryList(QDir::Dirs | QDir::NoDotAndDotDot);

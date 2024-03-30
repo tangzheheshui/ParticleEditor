@@ -9,6 +9,7 @@
 #include <QOpenGLFunctions_3_2_Core>
 #include <QQuickWindow>
 #include <QQuickItem>
+#include <QTimer>
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
 QT_FORWARD_DECLARE_CLASS(QOpenGLShader)
@@ -51,6 +52,7 @@ private slots:
 private:
     QPointF _posPress;
     QPointF _posPressMove;
+    QTimer _timer;
 };
 
 #endif

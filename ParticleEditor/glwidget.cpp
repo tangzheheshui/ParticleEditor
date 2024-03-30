@@ -14,6 +14,12 @@ GLWidget::GLWidget()
     installEventFilter(this);
     setFlag(ItemAcceptsInputMethod, true);
     connect(this, &QQuickItem::windowChanged, this, &GLWidget::handleWindowChanged);
+
+    _timer.setInterval(20);
+    QObject::connect(&_timer, &QTimer::timeout, [this](){
+        this->update();
+    });
+    _timer.start();
 }
 
 void GLWidget::handleWindowChanged(QQuickWindow* win) {
@@ -156,6 +162,6 @@ void GLWidget::dropEvent(QDropEvent *) {
 
 bool GLWidget::eventFilter(QObject *watched, QEvent *event) {
     //qDebug() << "eventFilter, type = " << event->type();
-    update();
+    //update();
     return QQuickItem::eventFilter(watched, event);
 }

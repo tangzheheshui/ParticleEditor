@@ -5,6 +5,9 @@
 #include <QSurfaceFormat>
 #include "glwidget.h"
 #include <QtQuick/QQuickView>
+#include <QQmlApplicationEngine>
+#include <QQuickStyle>
+#include <QSettings>
 
 int main( int argc, char ** argv )
 {
@@ -21,6 +24,7 @@ int main( int argc, char ** argv )
 
     qmlRegisterType<GLWidget>("CustomOpenGL",1,0,"GLWidget");
 
+    QQuickStyle::setStyle("Fusion");
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     view.setSource(QUrl("qrc:///main.qml"));
