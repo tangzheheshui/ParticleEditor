@@ -4,6 +4,7 @@ HEADERS += \
     glwidget.h \
     render/core/camera.h \
     render/core/light.h \
+    render/core/renderthread.h \
     render/core/scene.h \
     render/core/shadercache.h \
     render/core/texturemng.h \
@@ -15,6 +16,7 @@ SOURCES += \
     glwidget.cpp \
     main.cpp \
     render/core/camera.cpp \
+    render/core/renderthread.cpp \
     render/core/scene.cpp \
     render/core/shadercache.cpp \
     render/core/texturemng.cpp \

@@ -2,11 +2,17 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
 #include "glwidget.h"
-#include "render/core/scene.h"
+#include <QSGSimpleTextureNode>
 #include "render/core/camera.h"
+#include "render/core/renderthread.h"
+#include "render/core/texturemng.h"
+#include "render/core/shadercache.h"
+#include <QSGFlatColorMaterial>
 
 GLWidget::GLWidget()
 {
+    _node = new QSGSimpleTextureNode;
+
     setFlag(ItemHasContents, true);
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::AllButtons);
@@ -31,7 +37,7 @@ void GLWidget::handleWindowChanged(QQuickWindow* win) {
 
 void GLWidget::sync()
 {
-    connect(window(), &QQuickWindow::afterRendering, this, &GLWidget::paintGL, Qt::DirectConnection);
+    //connect(window(), &QQuickWindow::afterRendering, this, &GLWidget::paintGL, Qt::DirectConnection);
 }
 
 void GLWidget::cleanup() {
@@ -40,31 +46,54 @@ void GLWidget::cleanup() {
 
 GLWidget::~GLWidget()
 {
+    if (_renderThread) {
+        delete _renderThread;
+        _renderThread = nullptr;
+    }
+
+    if (_node) {
+        delete _node;
+        _node = nullptr;
+    }
 }
 
 QSGNode* GLWidget::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) {
-    paintGL();
+    if (!_renderThread) {
+        // 在切换上下文前，将一些可以共享的gl对象创建出来
+        TextureMng::getInstance();
+        ShaderCache::GetInstance();
+
+        // 将主线程的上下文，share给各个线程
+        auto context = QOpenGLContext::currentContext();
+        auto mainSurface = context->surface();
+
+        context->doneCurrent();
+        _renderThread = new RenderThread(context, {(int)width(), (int)height()},this);
+        context->makeCurrent(mainSurface);
+
+        _renderThread->start();
+        connect(_renderThread, &RenderThread::textureReady, this, &GLWidget::handleTextureReady);
+    }
+
+    return _node;
+}
+
+void GLWidget::handleTextureReady(int textureId, QSize size) {
+    if (!_node) {
+        new QSGSimpleTextureNode();
+    }
+
+    QImage image(size.width(), size.height(), QImage::Format_RGBA8888);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+    image = image.mirrored(false, true);
+    auto img = window()->createTextureFromImage(image);
+    _node->setTexture(img);
+    _node->setRect(boundingRect());
 }
 
 void GLWidget::paintGL() {
-    static bool temp = false;
-    if (!temp) {
-        QSGRendererInterface *rif = window()->rendererInterface();
-        Q_ASSERT(rif->graphicsApi() == QSGRendererInterface::OpenGL);
-        initializeOpenGLFunctions();
-        temp = true;
-    }
 
-    float xx = x();
-    float yy = y();
-    float w = width();
-    float h = height();
-    yy = window()->height() - yy - h;
-
-    Scene::getScene().setViewport({2*xx, 2*yy, 2*w, 2*h});
-    window()->beginExternalCommands();
-    Scene::getScene().draw();
-    window()->endExternalCommands();
 }
 
 void GLWidget::focusInEvent(QFocusEvent *) {
