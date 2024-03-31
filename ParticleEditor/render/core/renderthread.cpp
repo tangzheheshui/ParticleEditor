@@ -54,11 +54,6 @@ void RenderThread::run() {
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-        // glViewport(0, 0, m_size.width(), m_size.height());
-
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
         Scene::getScene().setViewport({0, 0, (float)m_size.width(), (float)m_size.height()});
 
         Scene::getScene().draw();
@@ -67,16 +62,12 @@ void RenderThread::run() {
         glBindTexture(GL_TEXTURE_2D, m_textureId);
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
 
-        // 将图像保存到文件
-        QString filePath = "/Users/liuhaifeng/personal/GameEditor/ParticleEditor/screen_picture/test.png";
-        if (image.save(filePath)) {
-            //qDebug() << "Texture saved to" << filePath;
-        }
-
         // 发送渲染完成的纹理信号
         emit textureReady(m_textureId, m_size);
 
         // 释放上下文
         _context.doneCurrent();
+
+        QThread::msleep(1); // 休眠1毫秒
     }
 }

@@ -14,6 +14,9 @@ public:
     RenderThread(QOpenGLContext* context, QSize size, QObject *parent = nullptr);
     ~RenderThread() {
         glDeleteTextures(1, &m_textureId);
+
+        quit();
+        wait(); // 等待线程退出
     }
 protected:
     void run() override;

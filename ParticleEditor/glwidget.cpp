@@ -17,7 +17,6 @@ GLWidget::GLWidget()
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::AllButtons);
     setAcceptTouchEvents(true);
-    installEventFilter(this);
     setFlag(ItemAcceptsInputMethod, true);
     connect(this, &QQuickItem::windowChanged, this, &GLWidget::handleWindowChanged);
 
@@ -55,6 +54,11 @@ GLWidget::~GLWidget()
         delete _node;
         _node = nullptr;
     }
+
+    if (_renderThread) {
+        delete _renderThread;
+        _renderThread = nullptr;
+    }
 }
 
 QSGNode* GLWidget::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) {
@@ -79,10 +83,6 @@ QSGNode* GLWidget::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) {
 }
 
 void GLWidget::handleTextureReady(int textureId, QSize size) {
-    if (!_node) {
-        new QSGSimpleTextureNode();
-    }
-
     QImage image(size.width(), size.height(), QImage::Format_RGBA8888);
     glBindTexture(GL_TEXTURE_2D, textureId);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
@@ -90,18 +90,6 @@ void GLWidget::handleTextureReady(int textureId, QSize size) {
     auto img = window()->createTextureFromImage(image);
     _node->setTexture(img);
     _node->setRect(boundingRect());
-}
-
-void GLWidget::paintGL() {
-
-}
-
-void GLWidget::focusInEvent(QFocusEvent *) {
-    //qDebug() << "focusInEvent";
-}
-
-void GLWidget::focusOutEvent(QFocusEvent *) {
-    //qDebug() << "focusOutEvent";
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event) {
@@ -137,10 +125,6 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event) {
     qDebug() << "mouseReleaseEvent at: " << event->pos();
 }
 
-void GLWidget::mouseDoubleClickEvent(QMouseEvent *event) {
-    //qDebug() << "mouseDoubleClickEvent: " << event->pos();
-}
-
 void GLWidget::wheelEvent(QWheelEvent *event) {
     if (event->isUpdateEvent()) {
         float fov = Camera::GetCamera().getFov();
@@ -153,44 +137,7 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
             fov = 90.0f;
 
         Camera::GetCamera().setFov(fov);
-        //qDebug() << "fov = " << fov;
     }
 }
 
-void GLWidget::touchEvent(QTouchEvent *event) {
-    //qDebug() << __FUNCTION__;
-}
 
-void GLWidget::hoverEnterEvent(QHoverEvent *event) {
-    //qDebug() << __FUNCTION__;
-}
-
-void GLWidget::hoverMoveEvent(QHoverEvent *event) {
-    //qDebug() << __FUNCTION__;
-}
-
-void GLWidget::hoverLeaveEvent(QHoverEvent *event) {
-    //qDebug() << __FUNCTION__;
-}
-
-void GLWidget::dragEnterEvent(QDragEnterEvent *) {
-    //qDebug() << __FUNCTION__;
-}
-
-void GLWidget::dragMoveEvent(QDragMoveEvent *) {
-    //qDebug() << __FUNCTION__;
-}
-
-void GLWidget::dragLeaveEvent(QDragLeaveEvent *) {
-    //qDebug() << __FUNCTION__;
-}
-
-void GLWidget::dropEvent(QDropEvent *) {
-    //qDebug() << __FUNCTION__;
-}
-
-bool GLWidget::eventFilter(QObject *watched, QEvent *event) {
-    //qDebug() << "eventFilter, type = " << event->type();
-    //update();
-    return QQuickItem::eventFilter(watched, event);
-}
