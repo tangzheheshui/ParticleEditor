@@ -48,19 +48,18 @@ void RenderThread::run() {
         if (m_FBO == 0) {
             createTexture();
         }
-        // 将当前线程的 OpenGL 上下文设为当前上下文
-
-        QOpenGLFunctions *f = _context.functions();
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
         Scene::getScene().setViewport({0, 0, (float)m_size.width(), (float)m_size.height()});
 
+        lock();
         Scene::getScene().draw();
 
         QImage image(m_size.width(), m_size.height(), QImage::Format_RGBA8888);
         glBindTexture(GL_TEXTURE_2D, m_textureId);
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+        unlock();
 
         // 发送渲染完成的纹理信号
         emit textureReady(m_textureId, m_size);

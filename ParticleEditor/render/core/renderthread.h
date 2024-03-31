@@ -18,6 +18,8 @@ public:
         quit();
         wait(); // 等待线程退出
     }
+    void lock() { _mutexTexture.lock(); }
+    void unlock() { _mutexTexture.unlock(); }
 protected:
     void run() override;
 private:
@@ -31,6 +33,7 @@ private:
     GLuint m_RBO = 0;
     QOpenGLContext _context;
     QOffscreenSurface* _surface = nullptr;
+    std::mutex _mutexTexture;
 };
 
 #endif // RENDERTHREAD_H

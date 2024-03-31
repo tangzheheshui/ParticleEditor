@@ -85,7 +85,11 @@ QSGNode* GLWidget::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) {
 void GLWidget::handleTextureReady(int textureId, QSize size) {
     QImage image(size.width(), size.height(), QImage::Format_RGBA8888);
     glBindTexture(GL_TEXTURE_2D, textureId);
+
+    _renderThread->lock();
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+    _renderThread->unlock();
+
     image = image.mirrored(false, true);
     auto img = window()->createTextureFromImage(image);
     _node->setTexture(img);
