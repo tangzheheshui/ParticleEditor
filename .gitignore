@@ -1,2 +1,11 @@
 build-ParticleEditor-Qt_6_6_2_macos-Debug/
 ParticleEditor/ParticleEditor.pro.user
+ParticleEditor/.qmake.stash
+ParticleEditor/.xcode/
+ParticleEditor/Debug/
+ParticleEditor/Info.plist
+ParticleEditor/ParticleEditor.xcodeproj/
+ParticleEditor/moc_glwidget.cpp
+ParticleEditor/moc_renderthread.cpp
+ParticleEditor/qrc_res.cpp
+ParticleEditor/qrc_shader.cpp

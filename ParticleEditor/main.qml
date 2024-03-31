@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import CustomOpenGL 1.0
 import QtQuick.Layouts
+import CustomOpenGL 1.0
 
 Item {
     width: 1024
@@ -122,72 +122,50 @@ Item {
             text: qsTr("+")
             font.pointSize: 30
             onClicked: {
-                console.log("Button clicked");
-                //inputDialog.test()
-                popup.open()
-            }
-
-            Popup {
-                id: popup
-                width: 200
-                height: 200
-                modal: true // 设置为模态，即点击外部区域不会关闭弹出窗口
-                focus: true // 使Popup获取焦点，以便接受键盘事件
-                x: 400
-                y: 400
-                // 弹出窗口内容
-                Rectangle {
-                    width: parent.width
-                    height: parent.height
-                    color: "lightblue"
-
-                    Text {
-                        text: "This is a popup window"
-                        anchors.centerIn: parent
-                    }
-
-                    Button {
-                        text: "Close"
-                        anchors.bottom: parent.bottom
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        onClicked: popup.close() // 关闭弹出窗口
-                    }
-                }
+                inputDialog.open()
             }
 
             Dialog {
-                function test() {
-                    console.log("Dialog show called");
-                    open()
-                }
-
                 id: inputDialog
                 x: (parent.width - width) / 2
                 y: (parent.height - height) / 2
                 parent: Overlay.overlay
-
                 focus: true
                 modal: true
                 title: qsTr("Input")
                 standardButtons: Dialog.Ok | Dialog.Cancel
-
+                onAccepted: {
+                    console.log(objName.text, objType.currentIndex);
+                }
                 ColumnLayout {
-                    spacing: 20
                     anchors.fill: parent
                     Label {
                         elide: Label.ElideRight
-                        text: qsTr("Please enter the credentials:")
+                        text: qsTr("name:")
                         Layout.fillWidth: true
                     }
                     TextField {
+                        id: objName
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         focus: true
                         placeholderText: qsTr("Username")
                         Layout.fillWidth: true
                     }
-                    TextField {
-                        placeholderText: qsTr("Password")
-                        echoMode: TextField.PasswordEchoOnEdit
+                    Label {
+                        elide: Label.ElideRight
+                        font.kerning: true
+                        text: qsTr("type:")
                         Layout.fillWidth: true
+                    }
+                    ComboBox {
+                        id: objType
+                        x: 30
+                        y: 30
+                        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                        model: ListModel {
+                            ListElement { text: "纹理矩形";}
+                            ListElement { text: "3D模型";}
+                        }
                     }
                 }
             }
@@ -203,6 +181,5 @@ Item {
             font.pointSize: 30
             rotation: 0
         }
-
-}
+    }
 }
