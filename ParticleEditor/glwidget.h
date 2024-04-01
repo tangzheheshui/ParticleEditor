@@ -37,6 +37,7 @@ private slots:
     void handleWindowChanged(QQuickWindow* win);
     void handleTextureReady(int textureId, QSize size);
 private:
+    QImage* _tempImage;
     QPointF _posPress;
     QPointF _posPressMove;
     QTimer _timer;

@@ -8,6 +8,7 @@
 #include "render/core/texturemng.h"
 #include "render/core/shadercache.h"
 #include <QSGFlatColorMaterial>
+#include <QQuickWindow>
 
 GLWidget::GLWidget()
 {
@@ -83,15 +84,28 @@ QSGNode* GLWidget::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *) {
 }
 
 void GLWidget::handleTextureReady(int textureId, QSize size) {
-    QImage image(size.width(), size.height(), QImage::Format_RGBA8888);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-
+    int width = size.width();
+    int height = size.height();
+    
+    if (!_tempImage) {
+        _tempImage = new QImage(width, height, QImage::Format_RGBA8888);
+    }
+    
+    // 上锁 取纹理数据
     _renderThread->lock();
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, _tempImage->bits());
     _renderThread->unlock();
-
-    image = image.mirrored(false, true);
-    auto img = window()->createTextureFromImage(image);
+    
+    // Y翻转
+    _tempImage->mirror();
+    
+    // 释放,否则内存泄漏了
+    if (_node->texture()) {
+        delete _node->texture();
+    }
+    
+    auto img = window()->createTextureFromImage(*_tempImage);
     _node->setTexture(img);
     _node->setRect(boundingRect());
 }
