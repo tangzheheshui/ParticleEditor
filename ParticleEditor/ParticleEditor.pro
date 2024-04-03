@@ -26,5 +26,5 @@ SOURCES += \
 DISTFILES +=
 
 RESOURCES += \
-    res.qrc \
+    qml.qrc \
     shader.qrc

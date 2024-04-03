@@ -18,7 +18,7 @@ Scene::Scene() {
     QElapsedTimer timer;
     timer.start();
 
-    loadTexture(":/render/res/textures");
+    loadTexture("/Users/liuhaifeng/personal/GameEditor/ParticleEditor/render/res/textures");
 
     qint64 elapsedTime = timer.elapsed();
     qDebug() << "Function execution time:" << elapsedTime << "milliseconds";
@@ -32,7 +32,7 @@ void Scene::createObjs() {
     {
         std::shared_ptr<ImageRectangle> objGround = std::make_shared<ImageRectangle>();
         float ground_width = 10;
-        objGround->setImagePath(":/render/res/textures/", "bricks2.jpg", "bricks2_normal.jpg", "bricks2_disp.jpg");
+        objGround->setImagePath("/Users/liuhaifeng/personal/GameEditor/ParticleEditor/render/res/textures/", "bricks2.jpg", "bricks2_normal.jpg", "bricks2_disp.jpg");
         objGround->setSetp(5, 5);
         QVector3D p1(-ground_width, 0,  ground_width);
         QVector3D p2(ground_width, 0,  ground_width);
