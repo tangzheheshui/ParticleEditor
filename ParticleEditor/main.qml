@@ -136,6 +136,7 @@ Item {
                 standardButtons: Dialog.Ok | Dialog.Cancel
                 onAccepted: {
                     console.log(objName.text, objType.currentIndex);
+                    myObject.updateMessage(objName.text);
                 }
                 ColumnLayout {
                     anchors.fill: parent

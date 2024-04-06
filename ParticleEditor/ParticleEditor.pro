@@ -2,6 +2,7 @@ QT += widgets opengl openglwidgets quick quickcontrols2
 
 HEADERS += \
     glwidget.h \
+    qmldata.h \
     render/core/camera.h \
     render/core/light.h \
     render/core/renderthread.h \
@@ -15,6 +16,7 @@ HEADERS += \
 SOURCES += \
     glwidget.cpp \
     main.cpp \
+    qmldata.cpp \
     render/core/camera.cpp \
     render/core/renderthread.cpp \
     render/core/scene.cpp \

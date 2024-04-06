@@ -8,6 +8,8 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QSettings>
+#include <QQmlContext>
+#include <qmldata.h>
 
 int main( int argc, char ** argv )
 {
@@ -29,7 +31,8 @@ int main( int argc, char ** argv )
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     view.setSource(QUrl("qrc:///main.qml"));
     view.show();
-
+    QmlData insData;
+    view.rootContext()->setContextProperty("myObject", &insData);
     int w = view.width();
     int h = view.height();
     view.setMinimumHeight(h);
